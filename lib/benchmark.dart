@@ -189,7 +189,7 @@ void main() {
                               resultsByApproach[approach][i].listeners)
                           .toString(),
                       style: CellStyle(alignment: TextAlignment.MiddleRight),
-                      rowSpan: listenersToTest.length - 1),
+                      rowSpan: updatesToTest.length),
                 Cell(resultsByApproach[approach][i].updates.toString(),
                     style: CellStyle(alignment: TextAlignment.MiddleRight)),
                 Cell(resultsByApproach[approach][i].time.toString(),
