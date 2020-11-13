@@ -5,22 +5,44 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:getx_benchmark/clever_value_notifier.dart';
+import 'package:getx_benchmark/linked_list_value_notifier.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
 const listenersToTest = [1, 2, 4, 8, 16, 32];
 const updatesToTest = [10, 100, 1000, 10000, 100000];
 
-
 final Map<String, BenchMarkFunction> map = {
   "ValueNotifier": defaultValueNotifier,
   "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
+  "LinkedListValueNotifier": linkedListValueNotifier,
 };
 
 Future<int> defaultValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
   final notifier = ValueNotifier<int>(0);
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners - 1; i++) {
+    notifier.addListener(() {});
+  }
+  notifier.addListener(() {
+    if (updates == notifier.value) {
+      timer.stop();
+      c.complete(timer.elapsedMicroseconds);
+    }
+  });
+
+  for (var i = 0; i <= updates; i++) {
+    notifier.value = i;
+  }
+  return c.future;
+}
+
+Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
+  final c = Completer<int>();
+  final notifier = LinkedListValueNotifier<int>(0);
   final timer = Stopwatch()..start();
 
   for (var i = 0; i < listeners - 1; i++) {
@@ -115,7 +137,9 @@ void main() {
         header: TableSection(
           cellStyle: CellStyle(alignment: TextAlignment.MiddleCenter),
           rows: [
-            Row(cells: [Cell("ValueNotifier benchmark", columnSpan: 9)]),
+            Row(cells: [
+              Cell("ValueNotifier benchmark", columnSpan: map.length * 3)
+            ]),
             Row(cells: [
               for (final approach in map.keys)
                 Cell(approach,
