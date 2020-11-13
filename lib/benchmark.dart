@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:getx_benchmark/clever_value_notifier.dart';
 import 'package:getx_benchmark/linked_list_value_notifier.dart';
+import 'package:getx_benchmark/original_change_notifier.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
@@ -13,11 +14,33 @@ const listenersToTest = [1, 2, 4, 8, 16, 32];
 const updatesToTest = [10, 100, 1000, 10000, 100000];
 
 final Map<String, BenchMarkFunction> map = {
+  "OriginalValueNotifier": originalValueNotifier,
   "ValueNotifier": defaultValueNotifier,
   "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
   "LinkedListValueNotifier": linkedListValueNotifier,
 };
+
+Future<int> originalValueNotifier({final int updates, final int listeners}) {
+  final c = Completer<int>();
+  final notifier = OriginalValueNotifier<int>(0);
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners - 1; i++) {
+    notifier.addListener(() {});
+  }
+  notifier.addListener(() {
+    if (updates == notifier.value) {
+      timer.stop();
+      c.complete(timer.elapsedMicroseconds);
+    }
+  });
+
+  for (var i = 0; i <= updates; i++) {
+    notifier.value = i;
+  }
+  return c.future;
+}
 
 Future<int> defaultValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
