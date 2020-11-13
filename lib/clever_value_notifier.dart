@@ -1,8 +1,19 @@
 import 'package:flutter/foundation.dart';
+typedef VoidCallback = void Function();
+
+class _Listener {
+  _Listener(this.func);
+  final VoidCallback func;
+  VoidCallback afterNotify;
+  void call() {
+    if (afterNotify == null) {
+      func();
+    }
+  }
+}
 
 class CleverChangeNotifier {
-  List<VoidCallback> _listeners = List<VoidCallback>();
-  List<int> _toRemove = List<int>();
+  List<_Listener> _listeners = List<_Listener>();
   bool _notifying = false;
 
   bool get hasListeners {
@@ -10,18 +21,22 @@ class CleverChangeNotifier {
   }
 
   void addListener(VoidCallback listener) {
-    _listeners.add(listener);
+    _listeners.add(_Listener(listener));
   }
 
   void removeListener(VoidCallback listener) {
+    int index;
     for (int i = 0; i < _listeners.length; i++) {
-      if (_listeners[i] == listener) {
-        if (_notifying) {
-          _toRemove.add(i);
-        } else {
-          _listeners.removeAt(i);
-        }
+      if (_listeners[i].func == listener) {
+        index = i;
         break;
+      }
+    }
+    if (index != null) {
+      if (_notifying) {
+        _listeners[index].afterNotify = () => _listeners.removeAt(index);
+      } else {
+        _listeners.removeAt(index);
       }
     }
   }
@@ -41,10 +56,9 @@ class CleverChangeNotifier {
           print('error');
         }
       }
-      for (int i = _toRemove.length - 1; i >= 0; i--) {
-        _listeners.removeAt(_toRemove[i]);
+      for (int i = start; i >= 0; i--) {
+        _listeners[i].afterNotify?.call();
       }
-      _toRemove.clear();
     }
 
     _notifying = false;
