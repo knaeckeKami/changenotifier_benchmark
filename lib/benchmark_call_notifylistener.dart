@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:barbecue/barbecue.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:getx_benchmark/clever_value_notifier.dart';
+import 'package:getx_benchmark/print_table.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
@@ -85,105 +85,8 @@ void main() {
                 await entry.value(listeners: listeners, updates: updates))
     ];
 
-    final resultsByApproach =
-        results.toMultiMap(keyFunc: (r) => r.approach, valueFunc: (v) => v);
-
-    final lastListenersByApproach = <String, int>{};
-
-    final table = Table(
-        tableStyle: TableStyle(border: true),
-        cellStyle: CellStyle(
-            borderBottom: true,
-            borderLeft: true,
-            borderTop: true,
-            borderRight: true,
-            paddingRight: 1,
-            paddingLeft: 1),
-        header: TableSection(
-          cellStyle: CellStyle(alignment: TextAlignment.MiddleCenter),
-          rows: [
-            Row(cells: [Cell("ValueNotifier benchmark", columnSpan: 9)]),
-            Row(cells: [
-              for (final approach in map.keys)
-                Cell(approach,
-                    columnSpan: 3,
-                    style: CellStyle(paddingLeft: 1, paddingRight: 1))
-            ]),
-            Row(cells: [
-              for (final approach in map.keys) ...[
-                Cell("Listeners"),
-                Cell("Updates"),
-                Cell("Time [µs]"),
-              ],
-            ]),
-          ],
-        ),
-        body: TableSection(rows: [
-          for (var i = 0; i < resultsByApproach.values.first.length; i++)
-            Row(cells: [
-              for (final approach in map.keys) ...[
-                if (lastListenersByApproach[approach] !=
-                    resultsByApproach[approach][i].listeners)
-                  Cell(
-                      (lastListenersByApproach[approach] =
-                              resultsByApproach[approach][i].listeners)
-                          .toString(),
-                      style: CellStyle(alignment: TextAlignment.MiddleRight),
-                      rowSpan: updatesToTest.length ),
-                Cell(resultsByApproach[approach][i].updates.toString(),
-                    style: CellStyle(alignment: TextAlignment.MiddleRight)),
-                Cell(resultsByApproach[approach][i].time.toString(),
-                    style: CellStyle(alignment: TextAlignment.MiddleRight)),
-              ]
-            ])
-        ]),
-        footer: TableSection(rows: [
-          Row(cells: [
-            for (final approach in map.keys) ...[
-              Cell("Total Time:", style: CellStyle(borderRight: false)),
-              Cell(
-                (resultsByApproach[approach]
-                    .map((e) => e.time)
-                    .fold(0, (a, b) => a + b)
-                    .toString()),
-                columnSpan: 2,
-                style: CellStyle(
-                    alignment: TextAlignment.MiddleRight, borderLeft: false),
-              ),
-            ]
-          ])
-        ]));
-    debugPrint(table.render());
+    printTestResults(results, updatesToTest);
 
     await Future.delayed(Duration(seconds: 5));
   });
-}
-
-class TestResult {
-  final int listeners;
-  final int updates;
-  final String approach;
-  final int time;
-
-  TestResult(this.listeners, this.updates, this.approach, this.time);
-}
-
-extension _ToMultiMap<T> on Iterable<T> {
-  Map<K, List<V>> toMultiMap<K, V>({
-    @required K Function(T) keyFunc,
-    @required V Function(T) valueFunc,
-  }) {
-    assert(keyFunc != null);
-    assert(valueFunc != null);
-    final map = <K, List<V>>{};
-
-    for (final e in this) {
-      final key = keyFunc(e);
-      final list = map[key] ?? <V>[];
-      list.add(valueFunc(e));
-      map[key] = list;
-    }
-
-    return map;
-  }
 }
