@@ -14,7 +14,8 @@ class _Listener {
 
 class CleverChangeNotifier {
   List<_Listener> _listeners = List<_Listener>();
-  bool _notifying = false;
+  int _notifications = 0;
+  bool get _notifying => _notifications > 0;
 
   bool get hasListeners {
     return _listeners.isNotEmpty;
@@ -25,18 +26,14 @@ class CleverChangeNotifier {
   }
 
   void removeListener(VoidCallback listener) {
-    int index;
     for (int i = 0; i < _listeners.length; i++) {
       if (_listeners[i].func == listener) {
-        index = i;
+        if (_notifying) {
+          _listeners[i].afterNotify = () => _listeners.removeAt(i);
+        } else {
+          _listeners.removeAt(i);
+        }
         break;
-      }
-    }
-    if (index != null) {
-      if (_notifying) {
-        _listeners[index].afterNotify = () => _listeners.removeAt(index);
-      } else {
-        _listeners.removeAt(index);
       }
     }
   }
@@ -46,22 +43,27 @@ class CleverChangeNotifier {
   }
 
   void notifyListeners() {
-    _notifying = true;
+    _notifications++;
+    if (_listeners.isEmpty) {
+      _notifications--;
+      return;
+    }
+
     if (_listeners != null) {
-      final int start = _listeners.length - 1;
-      for (int i = start; i >= 0; i--) {
+      final int end = _listeners.length;
+      for (int i = 0; i < end; i++) {
         try {
           _listeners[i]();
         } catch (exception, stack) {
           print('error');
         }
       }
-      for (int i = start; i >= 0; i--) {
+      for (int i = end - 1; i >= 0; i--) {
         _listeners[i].afterNotify?.call();
       }
     }
 
-    _notifying = false;
+    _notifications--;
   }
 }
 

@@ -11,6 +11,7 @@ typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 const listenersToTest = [1, 2, 4, 8, 16, 32];
 const updatesToTest = [10, 100, 1000, 10000, 100000];
 
+
 final Map<String, BenchMarkFunction> map = {
   "ValueNotifier": defaultValueNotifier,
   "Value (GetX)": getXValueNotifier,
