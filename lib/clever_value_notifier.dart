@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 typedef VoidCallback = void Function();
 
 class _Listener {
@@ -27,9 +28,10 @@ class CleverChangeNotifier {
 
   void removeListener(VoidCallback listener) {
     for (int i = 0; i < _listeners.length; i++) {
-      if (_listeners[i].func == listener) {
+      final _Listener _listener = _listeners[i];
+      if (_listener.func == listener && _listener.afterNotify == null) {
         if (_notifying) {
-          _listeners[i].afterNotify = () => _listeners.removeAt(i);
+          _listener.afterNotify = () => _listeners.removeAt(i);
         } else {
           _listeners.removeAt(i);
         }
