@@ -5,7 +5,7 @@ This benchmark may help us in finding a faster implementation for ChangeNotifier
 Result of running this on a phone of mine in Release Mode (flutter run --release -t lib/benchmark.dart):
 
 ```
-┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+ ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
  │                                          ValueNotifier benchmark                                          │
  ├───────────────────────────────────┬───────────────────────────────────┬───────────────────────────────────┤
  │           ValueNotifier           │           Value (GetX)            │        CleverValueNotifier        │
