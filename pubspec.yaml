@@ -22,7 +22,8 @@ environment:
 
 dependencies:
   get: ^3.16.2
-  barbecue: ^0.1.0
+  barbecue: ^0.2.0
+  ansicolor: ^1.0.5
   flutter:
     sdk: flutter
 

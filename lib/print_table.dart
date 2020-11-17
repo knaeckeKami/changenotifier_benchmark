@@ -1,3 +1,4 @@
+import 'package:ansicolor/ansicolor.dart';
 import 'package:barbecue/barbecue.dart';
 import 'package:flutter/foundation.dart';
 
@@ -12,14 +13,18 @@ class TestResult {
   TestResult(this.listeners, this.updates, this.approach, this.time);
 }
 
-void printTestResults(Iterable<TestResult> results, List<int> updatesToTest,
-    {String header}) {
+void printTestResults(Iterable<TestResult> results,
+    {String header,
+    bool showUpdates = true,
+    List<int> updatesToTest = const []}) {
   final resultsByApproach =
       results.toMultiMap(keyFunc: (r) => r.approach, valueFunc: (v) => v);
 
   final approaches = Set.of(results.map((e) => e.approach));
 
-  final lastListenersByApproach = <String, int>{};
+  final bold= AnsiPen()..white(bold: true);
+
+  int lastListeners;
 
   final table = Table(
       tableStyle: TableStyle(border: true),
@@ -34,19 +39,19 @@ void printTestResults(Iterable<TestResult> results, List<int> updatesToTest,
         cellStyle: CellStyle(alignment: TextAlignment.MiddleCenter),
         rows: [
           Row(cells: [
-            Cell(header ?? "ValueNotifier benchmark",
-                columnSpan: approaches.length * 3)
+            Cell(bold(header ?? "ValueNotifier benchmark"),
+                columnSpan: approaches.length * (showUpdates ? 2 : 1) + 1)
           ]),
           Row(cells: [
+            Cell("Listeners", rowSpan: 2),
             for (final approach in approaches)
               Cell(approach,
-                  columnSpan: 3,
+                  columnSpan: showUpdates ? 2 : 1,
                   style: CellStyle(paddingLeft: 1, paddingRight: 1))
           ]),
           Row(cells: [
             for (final approach in approaches) ...[
-              Cell("Listeners"),
-              Cell("Updates"),
+              if (showUpdates) Cell("Updates"),
               Cell("Time [µs]"),
             ],
           ]),
@@ -55,17 +60,18 @@ void printTestResults(Iterable<TestResult> results, List<int> updatesToTest,
       body: TableSection(rows: [
         for (var i = 0; i < resultsByApproach.values.first.length; i++)
           Row(cells: [
+            if (lastListeners !=
+                resultsByApproach[approaches.first][i].listeners)
+              Cell(
+                  (lastListeners =
+                          resultsByApproach[approaches.first][i].listeners)
+                      .toString(),
+                  style: CellStyle(alignment: TextAlignment.MiddleRight),
+                  rowSpan: showUpdates ? updatesToTest.length : 1),
             for (final approach in approaches) ...[
-              if (lastListenersByApproach[approach] !=
-                  resultsByApproach[approach][i].listeners)
-                Cell(
-                    (lastListenersByApproach[approach] =
-                            resultsByApproach[approach][i].listeners)
-                        .toString(),
-                    style: CellStyle(alignment: TextAlignment.MiddleRight),
-                    rowSpan: updatesToTest.length),
-              Cell(resultsByApproach[approach][i].updates.toString(),
-                  style: CellStyle(alignment: TextAlignment.MiddleRight)),
+              if (showUpdates)
+                Cell(resultsByApproach[approach][i].updates.toString(),
+                    style: CellStyle(alignment: TextAlignment.MiddleRight)),
               Cell(resultsByApproach[approach][i].time.toString(),
                   style: CellStyle(alignment: TextAlignment.MiddleRight)),
             ]
@@ -73,21 +79,24 @@ void printTestResults(Iterable<TestResult> results, List<int> updatesToTest,
       ]),
       footer: TableSection(rows: [
         Row(cells: [
+          Cell(bold("Total Time:")),
           for (final approach in approaches) ...[
-            Cell("Total Time:", style: CellStyle(borderRight: false)),
             Cell(
-              (resultsByApproach[approach]
+              bold(resultsByApproach[approach]
                   .map((e) => e.time)
                   .fold(0, (a, b) => a + b)
                   .toString()),
-              columnSpan: 2,
+              columnSpan: showUpdates ? 2 : 1,
               style: CellStyle(
                   alignment: TextAlignment.MiddleRight, borderLeft: false),
             ),
           ]
         ])
       ]));
-  debugPrint(table.render());
+  final tableString = table.render();
+  for (final line in tableString.split("\n")) {
+    print(line);
+  }
 }
 
 extension _ToMultiMap<T> on Iterable<T> {

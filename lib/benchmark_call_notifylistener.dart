@@ -85,7 +85,7 @@ void main() {
                 await entry.value(listeners: listeners, updates: updates))
     ];
 
-    printTestResults(results, updatesToTest);
+    printTestResults(results, updatesToTest: updatesToTest);
 
     await Future.delayed(Duration(seconds: 5));
   });

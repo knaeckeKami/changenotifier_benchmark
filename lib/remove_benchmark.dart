@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
+import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
@@ -14,11 +15,12 @@ typedef BenchMarkFunction = int Function({int listeners});
 const listenersToTest = [1, 2, 4, 8, 16, 32, 128, 1024];
 
 final Map<String, BenchMarkFunction> _benchmarksMap = {
-  "OriginalValueNotifier": originalValueNotifier,
   "ValueNotifier": defaultValueNotifier,
   "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
   "LinkedListValueNotifier": linkedListValueNotifier,
+  "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
+
 };
 
 int originalValueNotifier({final int listeners}) {
@@ -59,6 +61,24 @@ int defaultValueNotifier({final int updates, final int listeners}) {
 
 int linkedListValueNotifier({final int updates, final int listeners}) {
   final notifier = LinkedListValueNotifier<int>(0);
+  final listenersList = <VoidCallback>[
+    for (var i = 0; i < listeners; i++) () {}
+  ];
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners; i++) {
+    notifier.addListener(listenersList[i]);
+  }
+  for (var i = 0; i < listeners; i++) {
+    notifier.removeListener(listenersList[i]);
+  }
+  timer.stop();
+
+  return timer.elapsedMicroseconds;
+}
+
+int customLinkedListValueNotifier({final int updates, final int listeners}) {
+  final notifier = CustomLinkedListChangeNotifier<int>(0);
   final listenersList = <VoidCallback>[
     for (var i = 0; i < listeners; i++) () {}
   ];
@@ -132,7 +152,7 @@ void main() {
               ))
     ];
 
-    printTestResults(results, [0], header: "Remove Listeners benchmark test");
+    printTestResults(results,  header: "Remove Listeners benchmark test", showUpdates: false);
 
     //delay to be sure the big table is printed before finishing so the table is printed as whole;
     await Future.delayed(Duration(seconds: 5));

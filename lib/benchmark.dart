@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
+import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 
@@ -21,6 +22,7 @@ const Map<String, BenchMarkFunction> _benchmarksMap = {
   "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
   "LinkedListValueNotifier": linkedListValueNotifier,
+  "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
 };
 
 Future<int> originalValueNotifier({final int updates, final int listeners}) {
@@ -68,6 +70,27 @@ Future<int> defaultValueNotifier({final int updates, final int listeners}) {
 Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
   final notifier = LinkedListValueNotifier<int>(0);
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners - 1; i++) {
+    notifier.addListener(() {});
+  }
+  notifier.addListener(() {
+    if (updates == notifier.value) {
+      timer.stop();
+      c.complete(timer.elapsedMicroseconds);
+    }
+  });
+
+  for (var i = 0; i <= updates; i++) {
+    notifier.value = i;
+  }
+  return c.future;
+}
+
+Future<int> customLinkedListValueNotifier({final int updates, final int listeners}) {
+  final c = Completer<int>();
+  final notifier = CustomLinkedListChangeNotifier<int>(0);
   final timer = Stopwatch()..start();
 
   for (var i = 0; i < listeners - 1; i++) {
@@ -145,7 +168,7 @@ void main() {
                 await entry.value(listeners: listeners, updates: updates))
     ];
     
-    printTestResults(results, updatesToTest);
+    printTestResults(results, updatesToTest: updatesToTest);
   
     //delay to be sure the big table is printed before finishing so the table is printed as whole;
     await Future.delayed(Duration(seconds: 5));
