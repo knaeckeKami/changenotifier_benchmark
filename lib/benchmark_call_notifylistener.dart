@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
+
+import 'notifiers/thomas2.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
@@ -14,8 +16,26 @@ const updatesToTest = [10, 100, 1000, 10000, 100000];
 final Map<String, BenchMarkFunction> _benchmarksMap = {
   "ValueNotifier": defaultValueNotifier,
   "Value (GetX)": getXValueNotifier,
+  "Thomas2": thomas2,
   "CleverValueNotifier": cleverValueNotifier,
 };
+
+Future<int> thomas2({final int updates, final int listeners}) {
+  final c = Completer<int>();
+  final notifier = Thomas2ValueNotifier<int>(0);
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners - 1; i++) {
+    notifier.addListener(() {});
+  }
+  for (var i = 0; i <= updates; i++) {
+    notifier.value = i;
+  }
+  timer.stop();
+  c.complete(timer.elapsedMicroseconds);
+
+  return c.future;
+}
 
 Future<int> defaultValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();

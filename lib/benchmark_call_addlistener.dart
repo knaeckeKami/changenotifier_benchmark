@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:barbecue/barbecue.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
+import 'package:getx_benchmark/notifiers/thomas2.dart';
 import 'package:getx_benchmark/print_table.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
@@ -20,9 +20,24 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
   "ValueNotifier": defaultValueNotifier,
   "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
+  "Thomas2": thomas2,
   "LinkedListValueNotifier": linkedListValueNotifier,
-  "CustomLinkedListValueNotifier" : customLinkedListValueNotifier
+  "CustomLinkedListValueNotifier": customLinkedListValueNotifier
 };
+
+Future<int> thomas2({final int updates, final int listeners}) {
+  final c = Completer<int>();
+  final notifier = Thomas2ValueNotifier(0);
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners - 1; i++) {
+    notifier.addListener(() {});
+  }
+  timer.stop();
+  c.complete(timer.elapsedMicroseconds);
+
+  return c.future;
+}
 
 Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
@@ -38,8 +53,8 @@ Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
   return c.future;
 }
 
-
-Future<int> customLinkedListValueNotifier({final int updates, final int listeners}) {
+Future<int> customLinkedListValueNotifier(
+    {final int updates, final int listeners}) {
   final c = Completer<int>();
   final notifier = CustomLinkedListChangeNotifier(0);
   final timer = Stopwatch()..start();
@@ -52,8 +67,6 @@ Future<int> customLinkedListValueNotifier({final int updates, final int listener
 
   return c.future;
 }
-
-
 
 Future<int> originalValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
@@ -128,7 +141,8 @@ void main() {
                 await entry.value(listeners: listeners, updates: updates))
     ];
 
-    printTestResults(results,  header: "addListener benchmark", updatesToTest: updatesToTest);
+    printTestResults(results,
+        header: "addListener benchmark", updatesToTest: updatesToTest);
     await Future.delayed(Duration(seconds: 5));
   });
 }

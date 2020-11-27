@@ -1,14 +1,12 @@
 import 'dart:async';
 
-import 'package:barbecue/barbecue.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
-
 import 'package:getx_benchmark/print_table.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
@@ -88,7 +86,8 @@ Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
   return c.future;
 }
 
-Future<int> customLinkedListValueNotifier({final int updates, final int listeners}) {
+Future<int> customLinkedListValueNotifier(
+    {final int updates, final int listeners}) {
   final c = Completer<int>();
   final notifier = CustomLinkedListChangeNotifier<int>(0);
   final timer = Stopwatch()..start();
@@ -167,13 +166,10 @@ void main() {
             TestResult(listeners, updates, entry.key,
                 await entry.value(listeners: listeners, updates: updates))
     ];
-    
+
     printTestResults(results, updatesToTest: updatesToTest);
-  
+
     //delay to be sure the big table is printed before finishing so the table is printed as whole;
     await Future.delayed(Duration(seconds: 5));
   });
 }
-
-
-
