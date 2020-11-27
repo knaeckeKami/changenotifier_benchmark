@@ -21,7 +21,11 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  get: ^3.16.2
+  # get: ^3.16.2
+  get:
+    git:
+      url: https://github.com/jonataslaw/getx.git
+      ref: dev
   barbecue: ^0.2.0
   ansicolor: ^1.0.5
   flutter:
