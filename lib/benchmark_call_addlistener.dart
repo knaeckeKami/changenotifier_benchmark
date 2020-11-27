@@ -9,11 +9,13 @@ import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart'
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
+import 'package:getx_benchmark/testresult.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
+const _benchmarkRuns = 50;
 const listenersToTest = [1, 2, 4, 8, 16, 32];
-const updatesToTest = [10, 100, 1000, 10000, 100000];
+const updatesToTest = [0];
 
 final Map<String, BenchMarkFunction> _benchmarksMap = {
   "OriginalValueNotifier": originalValueNotifier,
@@ -21,7 +23,7 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
   "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
   "LinkedListValueNotifier": linkedListValueNotifier,
-  "CustomLinkedListValueNotifier" : customLinkedListValueNotifier
+  "CustomLinkedListValueNotifier": customLinkedListValueNotifier
 };
 
 Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
@@ -38,8 +40,8 @@ Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
   return c.future;
 }
 
-
-Future<int> customLinkedListValueNotifier({final int updates, final int listeners}) {
+Future<int> customLinkedListValueNotifier(
+    {final int updates, final int listeners}) {
   final c = Completer<int>();
   final notifier = CustomLinkedListChangeNotifier(0);
   final timer = Stopwatch()..start();
@@ -52,8 +54,6 @@ Future<int> customLinkedListValueNotifier({final int updates, final int listener
 
   return c.future;
 }
-
-
 
 Future<int> originalValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
@@ -121,14 +121,25 @@ void main() {
 
   test("benchmark", () async {
     final results = [
-      for (final entry in _benchmarksMap.entries)
-        for (var listeners in listenersToTest)
-          for (var updates in updatesToTest)
-            TestResult(listeners, updates, entry.key,
-                await entry.value(listeners: listeners, updates: updates))
-    ];
+      for (var i = 0; i < _benchmarkRuns; i++)
+        for (final entry in _benchmarksMap.entries)
+          for (var listeners in listenersToTest)
+            for (var updates in updatesToTest)
+              TestResult(
+                listeners,
+                updates,
+                entry.key,
+                await entry.value(
+                  listeners: listeners,
+                  updates: updates,
+                ),
+              )
+    ].calcAverages();
 
-    printTestResults(results,  header: "addListener benchmark", updatesToTest: updatesToTest);
-    await Future.delayed(Duration(seconds: 5));
+    printTestResults(results,
+        header: "addListener benchmark",
+        updatesToTest: updatesToTest,
+        showUpdates: false);
+    await Future.delayed(Duration(seconds: 1));
   });
 }

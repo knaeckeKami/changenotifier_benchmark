@@ -9,9 +9,11 @@ import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart'
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
+import 'package:getx_benchmark/testresult.dart';
 
 typedef BenchMarkFunction = int Function({int listeners});
 
+const _benchmarkRuns = 50;
 const listenersToTest = [1, 2, 4, 8, 16, 32, 128, 1024];
 
 final Map<String, BenchMarkFunction> _benchmarksMap = {
@@ -20,7 +22,6 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
   "CleverValueNotifier": cleverValueNotifier,
   "LinkedListValueNotifier": linkedListValueNotifier,
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
-
 };
 
 int originalValueNotifier({final int listeners}) {
@@ -141,18 +142,21 @@ void main() {
 
   test("benchmark", () async {
     final results = [
-      for (final entry in _benchmarksMap.entries)
-        for (var listeners in listenersToTest)
-          TestResult(
+      for (var i = 0; i < _benchmarkRuns; i++)
+        for (final entry in _benchmarksMap.entries)
+          for (var listeners in listenersToTest)
+            TestResult(
               listeners,
               0,
               entry.key,
               entry.value(
                 listeners: listeners,
-              ))
-    ];
+              ),
+            )
+    ].calcAverages();
 
-    printTestResults(results,  header: "Remove Listeners benchmark test", showUpdates: false);
+    printTestResults(results,
+        header: "Remove Listeners benchmark test", showUpdates: false);
 
     //delay to be sure the big table is printed before finishing so the table is printed as whole;
     await Future.delayed(Duration(seconds: 5));
