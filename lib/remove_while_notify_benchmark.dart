@@ -1,14 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
+
+import 'notifiers/thomas2.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int listeners});
 
@@ -21,8 +23,35 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
 //  "Value (GetX)": getXValueNotifier, (not supported)
   "CleverValueNotifier": cleverValueNotifier,
   "LinkedListValueNotifier": linkedListValueNotifier,
+  "Thomas2": thomas2,
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
 };
+
+Future<int> thomas2({final int listeners}) async {
+  final c = Completer<void>();
+  final notifier = Thomas2ValueNotifier<int>(0);
+  final listenersList = <VoidCallback>[
+    for (var i = 0; i < listeners - 1; i++) () {}
+  ];
+  final timer = Stopwatch()..start();
+
+  for (final l in listenersList) {
+    notifier.addListener(l);
+  }
+  notifier.addListener(() {
+    for (final l in listenersList) {
+      notifier.removeListener(l);
+    }
+    timer.stop();
+    c.complete();
+  });
+
+  notifier.value = 1;
+
+  await c.future;
+
+  return timer.elapsedMicroseconds;
+}
 
 Future<int> originalValueNotifier({final int listeners}) async {
   final c = Completer<void>();

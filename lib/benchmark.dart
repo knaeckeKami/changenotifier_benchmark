@@ -1,14 +1,12 @@
 import 'dart:async';
 
-import 'package:barbecue/barbecue.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
-
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
 

@@ -1,15 +1,16 @@
 import 'dart:async';
 
-import 'package:barbecue/barbecue.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
+
+import 'notifiers/thomas2.dart';
 
 typedef BenchMarkFunction = int Function({int listeners});
 
@@ -21,8 +22,27 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
   "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
   "LinkedListValueNotifier": linkedListValueNotifier,
+  "Thomas2": thomas2,
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
 };
+
+int thomas2({final int listeners}) {
+  final notifier = Thomas2ValueNotifier<int>(0);
+  final listenersList = <VoidCallback>[
+    for (var i = 0; i < listeners; i++) () {}
+  ];
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners; i++) {
+    notifier.addListener(listenersList[i]);
+  }
+  for (var i = 0; i < listeners; i++) {
+    notifier.removeListener(listenersList[i]);
+  }
+  timer.stop();
+
+  return timer.elapsedMicroseconds;
+}
 
 int originalValueNotifier({final int listeners}) {
   final notifier = OriginalValueNotifier<int>(0);

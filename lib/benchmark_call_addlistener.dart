@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:barbecue/barbecue.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
+import 'package:getx_benchmark/notifiers/thomas2.dart';
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
 
@@ -22,9 +22,24 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
   "ValueNotifier": defaultValueNotifier,
   "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
+  "Thomas2": thomas2,
   "LinkedListValueNotifier": linkedListValueNotifier,
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier
 };
+
+Future<int> thomas2({final int updates, final int listeners}) {
+  final c = Completer<int>();
+  final notifier = Thomas2ValueNotifier(0);
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners - 1; i++) {
+    notifier.addListener(() {});
+  }
+  timer.stop();
+  c.complete(timer.elapsedMicroseconds);
+
+  return c.future;
+}
 
 Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
@@ -120,7 +135,7 @@ void main() {
   });
 
   test("benchmark", () async {
-    final results = [ 
+    final results = [
       for (var i = 0; i < _benchmarkRuns; i++)
         for (final entry in _benchmarksMap.entries)
           for (var listeners in listenersToTest)
