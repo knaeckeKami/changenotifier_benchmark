@@ -13,8 +13,8 @@ import 'package:getx_benchmark/testresult.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
-const _benchmarkRuns = 50;
-const listenersToTest = [1, 2, 4, 8, 16, 32, 64];
+const _benchmarkRuns = 5000;
+const listenersToTest = [1, 2, 4, 8, 16, 32, 64, 128];
 const updatesToTest = [0];
 
 final Map<String, BenchMarkFunction> _benchmarksMap = {

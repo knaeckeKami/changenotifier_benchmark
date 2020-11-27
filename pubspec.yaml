@@ -22,10 +22,7 @@ environment:
 
 dependencies:
   # get: ^3.16.2
-  get:
-    git:
-      url: https://github.com/jonataslaw/getx.git
-      ref: dev
+  get: any
   barbecue: ^0.2.0
   ansicolor: ^1.0.5
   flutter:
