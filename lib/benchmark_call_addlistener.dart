@@ -14,7 +14,7 @@ import 'package:getx_benchmark/testresult.dart';
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
 const _benchmarkRuns = 50;
-const listenersToTest = [1, 2, 4, 8, 16, 32];
+const listenersToTest = [1, 2, 4, 8, 16, 32, 64];
 const updatesToTest = [0];
 
 final Map<String, BenchMarkFunction> _benchmarksMap = {
@@ -120,7 +120,7 @@ void main() {
   });
 
   test("benchmark", () async {
-    final results = [
+    final results = [ 
       for (var i = 0; i < _benchmarkRuns; i++)
         for (final entry in _benchmarksMap.entries)
           for (var listeners in listenersToTest)
@@ -136,10 +136,12 @@ void main() {
               )
     ].calcAverages();
 
-    printTestResults(results,
-        header: "addListener benchmark",
-        updatesToTest: updatesToTest,
-        showUpdates: false);
+    printTestResults(
+      results,
+      header: "addListener benchmark",
+      updatesToTest: updatesToTest,
+      showUpdates: false,
+    );
     await Future.delayed(Duration(seconds: 1));
   });
 }

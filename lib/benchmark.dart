@@ -14,7 +14,7 @@ import 'package:getx_benchmark/testresult.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
-const _benchmarkRuns = 50;
+const _benchmarkRuns = 10;
 const _listenersToTest = [1, 2, 4, 8, 16, 32];
 const _updatesToTest = [10, 100, 1000, 10000, 100000];
 
@@ -183,5 +183,5 @@ void main() {
 
     //delay to be sure the big table is printed before finishing so the table is printed as whole;
     await Future.delayed(Duration(seconds: 5));
-  });
+  }, timeout: Timeout.none);
 }

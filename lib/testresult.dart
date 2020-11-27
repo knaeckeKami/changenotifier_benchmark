@@ -24,7 +24,7 @@ class TestResult {
 }
 
 
-extension AverageByRun on Iterable<TestResult> {
+extension _AverageByRun on Iterable<TestResult> {
   double averageTime() {
     return this
         .map((e) => e.time)
