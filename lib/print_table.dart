@@ -1,17 +1,8 @@
 import 'package:ansicolor/ansicolor.dart';
 import 'package:barbecue/barbecue.dart';
 import 'package:flutter/foundation.dart';
-
-import 'benchmark.dart';
-
-class TestResult {
-  final int listeners;
-  final int updates;
-  final String approach;
-  final int time;
-
-  TestResult(this.listeners, this.updates, this.approach, this.time);
-}
+import 'package:getx_benchmark/testresult.dart';
+import 'package:getx_benchmark/testresult.dart';
 
 void printTestResults(Iterable<TestResult> results,
     {String header,
@@ -22,7 +13,7 @@ void printTestResults(Iterable<TestResult> results,
 
   final approaches = Set.of(results.map((e) => e.approach));
 
-  final bold= AnsiPen()..white(bold: true);
+  final bold = AnsiPen()..white(bold: true);
 
   int lastListeners;
 
@@ -96,25 +87,5 @@ void printTestResults(Iterable<TestResult> results,
   final tableString = table.render();
   for (final line in tableString.split("\n")) {
     print(line);
-  }
-}
-
-extension _ToMultiMap<T> on Iterable<T> {
-  Map<K, List<V>> toMultiMap<K, V>({
-    @required K Function(T) keyFunc,
-    @required V Function(T) valueFunc,
-  }) {
-    assert(keyFunc != null);
-    assert(valueFunc != null);
-    final map = <K, List<V>>{};
-
-    for (final e in this) {
-      final key = keyFunc(e);
-      final list = map[key] ?? <V>[];
-      list.add(valueFunc(e));
-      map[key] = list;
-    }
-
-    return map;
   }
 }

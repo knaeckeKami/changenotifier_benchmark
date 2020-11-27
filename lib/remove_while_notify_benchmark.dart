@@ -8,11 +8,13 @@ import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart'
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
+import 'package:getx_benchmark/testresult.dart';
 
 import 'notifiers/thomas2.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int listeners});
 
+const _benchmarkRuns = 50;
 const listenersToTest = [1, 2, 4, 8, 16, 32, 64, 128];
 
 final Map<String, BenchMarkFunction> _benchmarksMap = {
@@ -213,16 +215,18 @@ void main() {
 
   test("benchmark", () async {
     final results = [
-      for (final entry in _benchmarksMap.entries)
-        for (var listeners in listenersToTest)
-          TestResult(
+      for (var i = 0; i < _benchmarkRuns; i++)
+        for (final entry in _benchmarksMap.entries)
+          for (var listeners in listenersToTest)
+            TestResult(
               listeners,
               0,
               entry.key,
               await entry.value(
                 listeners: listeners,
-              ))
-    ];
+              ),
+            )
+    ].calcAverages();
 
     printTestResults(results,
         header: "Remove Listeners while notify benchmark test",

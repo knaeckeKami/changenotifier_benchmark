@@ -8,11 +8,13 @@ import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart'
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
+import 'package:getx_benchmark/testresult.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
-const listenersToTest = [1, 2, 4, 8, 16, 32];
-const updatesToTest = [10, 100, 1000, 10000, 100000];
+const _benchmarkRuns = 10;
+const _listenersToTest = [1, 2, 4, 8, 16, 32];
+const _updatesToTest = [10, 100, 1000, 10000, 100000];
 
 const Map<String, BenchMarkFunction> _benchmarksMap = {
   "OriginalValueNotifier": originalValueNotifier,
@@ -160,16 +162,24 @@ void main() {
 
   test("benchmark", () async {
     final results = [
-      for (final entry in _benchmarksMap.entries)
-        for (var listeners in listenersToTest)
-          for (var updates in updatesToTest)
-            TestResult(listeners, updates, entry.key,
-                await entry.value(listeners: listeners, updates: updates))
-    ];
+      for (var i = 0; i < _benchmarkRuns; i++)
+        for (final entry in _benchmarksMap.entries)
+          for (var listeners in _listenersToTest)
+            for (var updates in _updatesToTest)
+              TestResult(
+                listeners,
+                updates,
+                entry.key,
+                await entry.value(
+                  listeners: listeners,
+                  updates: updates,
+                ),
+              )
+    ].calcAverages();
 
-    printTestResults(results, updatesToTest: updatesToTest);
+    printTestResults(results, updatesToTest: _updatesToTest);
 
     //delay to be sure the big table is printed before finishing so the table is printed as whole;
     await Future.delayed(Duration(seconds: 5));
-  });
+  }, timeout: Timeout.none);
 }

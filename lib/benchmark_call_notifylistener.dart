@@ -5,10 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
+import 'package:getx_benchmark/testresult.dart';
 
 import 'notifiers/thomas2.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
+
+const _benchmarkRuns = 50;
 
 const listenersToTest = [1, 2, 4, 8, 16, 32];
 const updatesToTest = [10, 100, 1000, 10000, 100000];
@@ -98,12 +101,19 @@ void main() {
 
   test("benchmark", () async {
     final results = [
-      for (final entry in _benchmarksMap.entries)
-        for (var listeners in listenersToTest)
-          for (var updates in updatesToTest)
-            TestResult(listeners, updates, entry.key,
-                await entry.value(listeners: listeners, updates: updates))
-    ];
+      for (var i = 0; i < _benchmarkRuns; i++)
+        for (final entry in _benchmarksMap.entries)
+          for (var listeners in listenersToTest)
+            for (var updates in updatesToTest)
+              TestResult(
+                  listeners,
+                  updates,
+                  entry.key,
+                  await entry.value(
+                    listeners: listeners,
+                    updates: updates,
+                  ))
+    ].calcAverages();
 
     printTestResults(results, updatesToTest: updatesToTest);
 
