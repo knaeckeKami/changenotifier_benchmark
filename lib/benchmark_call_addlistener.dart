@@ -20,10 +20,8 @@ const updatesToTest = [0];
 final Map<String, BenchMarkFunction> _benchmarksMap = {
   "OriginalValueNotifier": originalValueNotifier,
   "ValueNotifier": defaultValueNotifier,
-  "Value (GetX)": getXValueNotifier,
   "CleverValueNotifier": cleverValueNotifier,
   "Thomas2": thomas2,
-  "LinkedListValueNotifier": linkedListValueNotifier,
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier
 };
 

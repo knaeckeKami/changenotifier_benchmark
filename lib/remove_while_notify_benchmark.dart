@@ -20,9 +20,7 @@ const listenersToTest = [1, 2, 4, 8, 16, 32, 64, 128];
 final Map<String, BenchMarkFunction> _benchmarksMap = {
   "OriginalValueNotifier": originalValueNotifier,
   "ValueNotifier": defaultValueNotifier,
-//  "Value (GetX)": getXValueNotifier, (not supported)
   "CleverValueNotifier": cleverValueNotifier,
-  "LinkedListValueNotifier": linkedListValueNotifier,
   "Thomas2": thomas2,
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
 };
