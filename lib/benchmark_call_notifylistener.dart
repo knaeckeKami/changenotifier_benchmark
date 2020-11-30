@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
@@ -59,23 +58,6 @@ Future<int> defaultValueNotifier({final int updates, final int listeners}) {
 Future<int> cleverValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
   final notifier = CleverValueNotifier<int>(0);
-  final timer = Stopwatch()..start();
-
-  for (var i = 0; i < listeners - 1; i++) {
-    notifier.addListener(() {});
-  }
-  for (var i = 0; i <= updates; i++) {
-    notifier.value = i;
-  }
-  timer.stop();
-  c.complete(timer.elapsedMicroseconds);
-
-  return c.future;
-}
-
-Future<int> getXValueNotifier({final int updates, final int listeners}) {
-  final c = Completer<int>();
-  final notifier = Value<int>(0);
   final timer = Stopwatch()..start();
 
   for (var i = 0; i < listeners - 1; i++) {

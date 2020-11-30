@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
 import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
@@ -132,23 +131,6 @@ int cleverValueNotifier({final int updates, final int listeners}) {
   return timer.elapsedMicroseconds;
 }
 
-int getXValueNotifier({final int updates, final int listeners}) {
-  final notifier = Value<int>(0);
-  final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners; i++) () {}
-  ];
-  final timer = Stopwatch()..start();
-
-  for (var i = 0; i < listeners; i++) {
-    notifier.addListener(listenersList[i]);
-  }
-  for (var i = 0; i < listeners; i++) {
-    notifier.removeListener(listenersList[i]);
-  }
-  timer.stop();
-
-  return timer.elapsedMicroseconds;
-}
 
 void main() {
   setUpAll(() async {
