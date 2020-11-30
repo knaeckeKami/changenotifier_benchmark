@@ -18,9 +18,8 @@ const updatesToTest = [10, 100, 1000, 10000, 100000];
 
 final Map<String, BenchMarkFunction> _benchmarksMap = {
   "ValueNotifier": defaultValueNotifier,
-  "Value (GetX)": getXValueNotifier,
-  "Thomas2": thomas2,
   "CleverValueNotifier": cleverValueNotifier,
+  "Thomas2": thomas2,
 };
 
 Future<int> thomas2({final int updates, final int listeners}) {
