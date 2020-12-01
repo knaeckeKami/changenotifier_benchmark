@@ -10,7 +10,7 @@ import 'package:getx_benchmark/notifiers/thomas2.dart';
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
 
-typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
+typedef BenchMarkFunction = Future<int> Function({int? updates, int? listeners});
 
 const _benchmarkRuns = 5000;
 const listenersToTest = [1, 2, 4, 8, 16, 32, 64, 128];
@@ -24,12 +24,12 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier
 };
 
-Future<int> thomas2({final int updates, final int listeners}) {
+Future<int> thomas2({final int? updates, final int? listeners}) {
   final c = Completer<int>();
   final notifier = Thomas2ValueNotifier(0);
   final timer = Stopwatch()..start();
 
-  for (var i = 0; i < listeners - 1; i++) {
+  for (var i = 0; i < listeners! - 1; i++) {
     notifier.addListener(() {});
   }
   timer.stop();
@@ -38,7 +38,7 @@ Future<int> thomas2({final int updates, final int listeners}) {
   return c.future;
 }
 
-Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
+Future<int> linkedListValueNotifier({final int? updates, required final int listeners}) {
   final c = Completer<int>();
   final notifier = LinkedListValueNotifier(0);
   final timer = Stopwatch()..start();
@@ -53,12 +53,12 @@ Future<int> linkedListValueNotifier({final int updates, final int listeners}) {
 }
 
 Future<int> customLinkedListValueNotifier(
-    {final int updates, final int listeners}) {
+    {final int? updates, final int? listeners}) {
   final c = Completer<int>();
   final notifier = CustomLinkedListChangeNotifier(0);
   final timer = Stopwatch()..start();
 
-  for (var i = 0; i < listeners - 1; i++) {
+  for (var i = 0; i < listeners! - 1; i++) {
     notifier.addListener(() {});
   }
   timer.stop();
@@ -67,12 +67,12 @@ Future<int> customLinkedListValueNotifier(
   return c.future;
 }
 
-Future<int> originalValueNotifier({final int updates, final int listeners}) {
+Future<int> originalValueNotifier({final int? updates, final int? listeners}) {
   final c = Completer<int>();
   final notifier = OriginalValueNotifier(0);
   final timer = Stopwatch()..start();
 
-  for (var i = 0; i < listeners - 1; i++) {
+  for (var i = 0; i < listeners! - 1; i++) {
     notifier.addListener(() {});
   }
   timer.stop();
@@ -81,12 +81,12 @@ Future<int> originalValueNotifier({final int updates, final int listeners}) {
   return c.future;
 }
 
-Future<int> defaultValueNotifier({final int updates, final int listeners}) {
+Future<int> defaultValueNotifier({final int? updates, final int? listeners}) {
   final c = Completer<int>();
   final notifier = ValueNotifier<int>(0);
   final timer = Stopwatch()..start();
 
-  for (var i = 0; i < listeners - 1; i++) {
+  for (var i = 0; i < listeners! - 1; i++) {
     notifier.addListener(() {});
   }
   timer.stop();
@@ -95,12 +95,12 @@ Future<int> defaultValueNotifier({final int updates, final int listeners}) {
   return c.future;
 }
 
-Future<int> cleverValueNotifier({final int updates, final int listeners}) {
+Future<int> cleverValueNotifier({final int? updates, final int? listeners}) {
   final c = Completer<int>();
   final notifier = CleverValueNotifier<int>(0);
   final timer = Stopwatch()..start();
 
-  for (var i = 0; i < listeners - 1; i++) {
+  for (var i = 0; i < listeners! - 1; i++) {
     notifier.addListener(() {});
   }
   timer.stop();

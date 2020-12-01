@@ -12,28 +12,28 @@ class _Listener {
 }
 
 class Thomas2ChangeNotifier {
-  List<_Listener> _listeners = List<_Listener>();
+  List<_Listener>? _listeners = <_Listener>[];
   int _notificationCallStackDepth = 0;
   int _removedListeners = 0;
-  int _listenerLengh; // This is the length on the first not recursive call
+  int? _listenerLengh; // This is the length on the first not recursive call
 
   bool get hasListeners {
-    return _listeners.isNotEmpty;
+    return _listeners!.isNotEmpty;
   }
 
   void addListener(VoidCallback listener) {
-    _listeners.add(_Listener(listener));
+    _listeners!.add(_Listener(listener));
   }
 
   void removeListener(VoidCallback listener) {
-    for (int i = 0; i < _listeners.length; i++) {
-      final _Listener _listener = _listeners[i];
+    for (int i = 0; i < _listeners!.length; i++) {
+      final _Listener _listener = _listeners![i];
       if (_listener.func == listener && _listener.active) {
         if (_notificationCallStackDepth > 0) {
           _listener.active = false;
           _removedListeners++;
         } else {
-          _listeners.removeAt(i);
+          _listeners!.removeAt(i);
         }
         break;
       }
@@ -45,16 +45,16 @@ class Thomas2ChangeNotifier {
   }
 
   void notifyListeners() {
-    if (_listeners.isEmpty) {
+    if (_listeners!.isEmpty) {
       return;
     }
     _notificationCallStackDepth++;
 
     if (_listeners != null) {
-      _listenerLengh ??= _listeners.length;
-      for (int i = 0; i < _listenerLengh; i++) {
+      _listenerLengh ??= _listeners!.length;
+      for (int i = 0; i < _listenerLengh!; i++) {
         try {
-          _listeners[i]();
+          _listeners![i]();
         } catch (exception, stack) {
           print('error');
         }
@@ -64,12 +64,12 @@ class Thomas2ChangeNotifier {
     _notificationCallStackDepth--;
     if (_notificationCallStackDepth == 0) {
       if (_removedListeners != 0) {
-        final validListenerCount = _listeners.length - _removedListeners;
-        final newListeners = List<_Listener>()..length = validListenerCount;
+        final validListenerCount = _listeners!.length - _removedListeners;
+        final newListeners = <_Listener>[]..length = validListenerCount;
         int newIndex = 0;
-        for (int i = 0; i < _listeners.length; i++) {
-          if (_listeners[i].active) {
-            newListeners[newIndex++] = _listeners[i];
+        for (int i = 0; i < _listeners!.length; i++) {
+          if (_listeners![i].active) {
+            newListeners[newIndex++] = _listeners![i];
           }
         }
         _listeners = newListeners;

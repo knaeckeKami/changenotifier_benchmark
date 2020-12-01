@@ -8,7 +8,7 @@ import 'package:getx_benchmark/testresult.dart';
 
 import 'notifiers/thomas2.dart';
 
-typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
+typedef BenchMarkFunction = Future<int> Function({int? updates, int? listeners});
 
 const _benchmarkRuns = 50;
 
@@ -21,15 +21,15 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
   "Thomas2": thomas2,
 };
 
-Future<int> thomas2({final int updates, final int listeners}) {
+Future<int> thomas2({final int? updates, final int? listeners}) {
   final c = Completer<int>();
   final notifier = Thomas2ValueNotifier<int>(0);
   final timer = Stopwatch()..start();
 
-  for (var i = 0; i < listeners - 1; i++) {
+  for (var i = 0; i < listeners! - 1; i++) {
     notifier.addListener(() {});
   }
-  for (var i = 0; i <= updates; i++) {
+  for (var i = 0; i <= updates!; i++) {
     notifier.value = i;
   }
   timer.stop();
@@ -38,15 +38,15 @@ Future<int> thomas2({final int updates, final int listeners}) {
   return c.future;
 }
 
-Future<int> defaultValueNotifier({final int updates, final int listeners}) {
+Future<int> defaultValueNotifier({final int? updates, final int? listeners}) {
   final c = Completer<int>();
   final notifier = ValueNotifier<int>(0);
   final timer = Stopwatch()..start();
 
-  for (var i = 0; i < listeners - 1; i++) {
+  for (var i = 0; i < listeners! - 1; i++) {
     notifier.addListener(() {});
   }
-  for (var i = 0; i <= updates; i++) {
+  for (var i = 0; i <= updates!; i++) {
     notifier.value = i;
   }
   timer.stop();
@@ -55,15 +55,15 @@ Future<int> defaultValueNotifier({final int updates, final int listeners}) {
   return c.future;
 }
 
-Future<int> cleverValueNotifier({final int updates, final int listeners}) {
+Future<int> cleverValueNotifier({final int? updates, final int? listeners}) {
   final c = Completer<int>();
   final notifier = CleverValueNotifier<int>(0);
   final timer = Stopwatch()..start();
 
-  for (var i = 0; i < listeners - 1; i++) {
+  for (var i = 0; i < listeners! - 1; i++) {
     notifier.addListener(() {});
   }
-  for (var i = 0; i <= updates; i++) {
+  for (var i = 0; i <= updates!; i++) {
     notifier.value = i;
   }
   timer.stop();

@@ -21,7 +21,7 @@ class LinkedListValueNotifier<T> implements ValueNotifier<T> {
   @override
   void removeListener(listener) {
     if (_listeners.isEmpty) return;
-    _Entry<VoidCallback> entry = _listeners.first;
+    _Entry<VoidCallback>? entry = _listeners.first;
     while (entry != null) {
       if (entry.value == listener) {
         entry.unlink();
@@ -44,15 +44,15 @@ class LinkedListValueNotifier<T> implements ValueNotifier<T> {
 
   @override
   void notifyListeners() {
-    _Entry<VoidCallback> entry = _listeners.first;
+    _Entry<VoidCallback>? entry = _listeners.first;
     final entries = List.generate(_listeners.length, (_) {
       final e = entry;
-      entry = entry.next;
+      entry = entry!.next;
       return e;
     });
     for (final entry in entries) {
       try {
-        if (entry.list == _listeners) entry.value();
+        if (entry!.list == _listeners) entry.value();
       } catch (error) {
         print(error);
       }

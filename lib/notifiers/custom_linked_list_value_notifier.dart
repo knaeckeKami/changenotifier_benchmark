@@ -19,9 +19,9 @@ class _ListenerEntry extends LinkedListEntry<_ListenerEntry> {
 ///
 ///  * [CustomLinkedListChangeNotifier], which is a [ChangeNotifier] that wraps a single value.
 class ChangeNotifier implements Listenable {
-  LinkedList<_ListenerEntry> _listeners = LinkedList<_ListenerEntry>();
-  _ListenerEntry _notifyCursor;
-  _ListenerEntry _notifyLimit;
+  LinkedList<_ListenerEntry>? _listeners = LinkedList<_ListenerEntry>();
+  _ListenerEntry? _notifyCursor;
+  _ListenerEntry? _notifyLimit;
 
   bool _debugAssertNotDisposed() {
     assert(() {
@@ -122,9 +122,9 @@ class ChangeNotifier implements Listenable {
   @override
   void removeListener(VoidCallback listener) {
     assert(_debugAssertNotDisposed());
-    if (_listeners.isEmpty) return;
+    if (_listeners!.isEmpty) return;
 
-    for (_ListenerEntry entry = _listeners?.first;
+    for (_ListenerEntry? entry = _listeners?.first;
     entry != null;
     entry = entry.next) {
       if (entry.listener == listener) {
@@ -176,7 +176,7 @@ class ChangeNotifier implements Listenable {
   @visibleForTesting
   void notifyListeners() {
     assert(_debugAssertNotDisposed());
-    if (_listeners.isEmpty) return;
+    if (_listeners!.isEmpty) return;
 
     _notifyLimit = _listeners?.last;
     _notifyCursor = _listeners?.first;
@@ -204,7 +204,7 @@ class ChangeNotifier implements Listenable {
       /// _notifyCursor could be null here.
       if (_notifyCursor == null) {
         /// in case that the List is now empty
-        if (_listeners.isEmpty) return;
+        if (_listeners!.isEmpty) return;
 
         _notifyCursor = _listeners?.first;
       } else {

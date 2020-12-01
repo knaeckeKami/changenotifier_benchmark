@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class OriginalChangeNotifier implements Listenable {
-  ObserverList<VoidCallback> _listeners = ObserverList<VoidCallback>();
+  ObserverList<VoidCallback>? _listeners = ObserverList<VoidCallback>();
 
   bool _debugAssertNotDisposed() {
     assert(() {
@@ -32,7 +32,7 @@ class OriginalChangeNotifier implements Listenable {
   @protected
   bool get hasListeners {
     assert(_debugAssertNotDisposed());
-    return _listeners.isNotEmpty;
+    return _listeners!.isNotEmpty;
   }
 
   /// Register a closure to be called when the object changes.
@@ -41,7 +41,7 @@ class OriginalChangeNotifier implements Listenable {
   @override
   void addListener(VoidCallback listener) {
     assert(_debugAssertNotDisposed());
-    _listeners.add(listener);
+    _listeners!.add(listener);
   }
 
   /// Remove a previously registered closure from the list of closures that are
@@ -66,7 +66,7 @@ class OriginalChangeNotifier implements Listenable {
   @override
   void removeListener(VoidCallback listener) {
     assert(_debugAssertNotDisposed());
-    _listeners.remove(listener);
+    _listeners!.remove(listener);
   }
 
   /// Discards any resources used by the object. After this is called, the
@@ -102,10 +102,10 @@ class OriginalChangeNotifier implements Listenable {
     assert(_debugAssertNotDisposed());
     if (_listeners != null) {
       final List<VoidCallback> localListeners =
-          List<VoidCallback>.from(_listeners);
+          List<VoidCallback>.from(_listeners!);
       for (final VoidCallback listener in localListeners) {
         try {
-          if (_listeners.contains(listener)) listener();
+          if (_listeners!.contains(listener)) listener();
         } catch (exception, stack) {
           FlutterError.reportError(FlutterErrorDetails(
             exception: exception,

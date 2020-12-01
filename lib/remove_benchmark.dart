@@ -11,7 +11,7 @@ import 'package:getx_benchmark/testresult.dart';
 
 import 'notifiers/thomas2.dart';
 
-typedef BenchMarkFunction = int Function({int listeners});
+typedef BenchMarkFunction = int Function({int? listeners});
 
 const _benchmarkRuns = 50;
 const listenersToTest = [1, 2, 4, 8, 16, 32, 128, 1024];
@@ -23,10 +23,10 @@ final Map<String, BenchMarkFunction> _benchmarksMap = {
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
 };
 
-int thomas2({final int listeners}) {
+int thomas2({final int? listeners}) {
   final notifier = Thomas2ValueNotifier<int>(0);
   final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners; i++) () {}
+    for (var i = 0; i < listeners!; i++) () {}
   ];
   final timer = Stopwatch()..start();
 
@@ -41,7 +41,7 @@ int thomas2({final int listeners}) {
   return timer.elapsedMicroseconds;
 }
 
-int originalValueNotifier({final int listeners}) {
+int originalValueNotifier({required final int listeners}) {
   final notifier = OriginalValueNotifier<int>(0);
   final listenersList = <VoidCallback>[
     for (var i = 0; i < listeners; i++) () {}
@@ -59,10 +59,10 @@ int originalValueNotifier({final int listeners}) {
   return timer.elapsedMicroseconds;
 }
 
-int defaultValueNotifier({final int updates, final int listeners}) {
+int defaultValueNotifier({final int? updates, final int? listeners}) {
   final notifier = ValueNotifier<int>(0);
   final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners; i++) () {}
+    for (var i = 0; i < listeners!; i++) () {}
   ];
   final timer = Stopwatch()..start();
 
@@ -77,7 +77,7 @@ int defaultValueNotifier({final int updates, final int listeners}) {
   return timer.elapsedMicroseconds;
 }
 
-int linkedListValueNotifier({final int updates, final int listeners}) {
+int linkedListValueNotifier({final int? updates, required final int listeners}) {
   final notifier = LinkedListValueNotifier<int>(0);
   final listenersList = <VoidCallback>[
     for (var i = 0; i < listeners; i++) () {}
@@ -95,10 +95,10 @@ int linkedListValueNotifier({final int updates, final int listeners}) {
   return timer.elapsedMicroseconds;
 }
 
-int customLinkedListValueNotifier({final int updates, final int listeners}) {
+int customLinkedListValueNotifier({final int? updates, final int? listeners}) {
   final notifier = CustomLinkedListChangeNotifier<int>(0);
   final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners; i++) () {}
+    for (var i = 0; i < listeners!; i++) () {}
   ];
   final timer = Stopwatch()..start();
 
@@ -113,10 +113,10 @@ int customLinkedListValueNotifier({final int updates, final int listeners}) {
   return timer.elapsedMicroseconds;
 }
 
-int cleverValueNotifier({final int updates, final int listeners}) {
+int cleverValueNotifier({final int? updates, final int? listeners}) {
   final notifier = CleverValueNotifier<int>(0);
   final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners; i++) () {}
+    for (var i = 0; i < listeners!; i++) () {}
   ];
   final timer = Stopwatch()..start();
 
