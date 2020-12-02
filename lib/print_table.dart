@@ -9,7 +9,7 @@ void printTestResults(Iterable<TestResult> results,
     bool showUpdates = true,
     List<int> updatesToTest = const []}) {
   final resultsByApproach =
-      results.toMultiMap(keyFunc: ((r) => r.approach) as String Function(TestResult), valueFunc: (v) => v);
+      results.toMultiMap(keyFunc: ((r) => r.approach), valueFunc: (v) => v);
 
   final approaches = Set.of(results.map((e) => e.approach));
 
