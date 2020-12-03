@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 class CleverChangeNotifier implements Listenable {
   int _length = 0;
-  List<VoidCallback?> _listeners = <VoidCallback?>[];
+  List<VoidCallback?> _listeners = List<VoidCallback?>.filled(0, null);
   int _notificationCallStackDepth = 0;
   int _removedListeners = 0;
   bool _disposed = false;
@@ -28,15 +28,14 @@ class CleverChangeNotifier implements Listenable {
 
     if (_length == _listeners.length) {
       if (_length == 0) {
-        _listeners = <VoidCallback?>[listener];
-        _length++;
-        return;
+        _listeners = List<VoidCallback?>.filled(1, null);
       } else {
-        final storage = <VoidCallback?>[]..length = _listeners.length * 2;
+        final newListeners =
+            List<VoidCallback?>.filled(_listeners.length * 2, null);
         for (int i = 0; i < _length; i++) {
-          storage[i] = _listeners[i];
+          newListeners[i] = _listeners[i];
         }
-        _listeners = storage;
+        _listeners = newListeners;
       }
     }
     _listeners[_length++] = listener;
@@ -106,7 +105,7 @@ class CleverChangeNotifier implements Listenable {
     if (_notificationCallStackDepth == 0 && _removedListeners > 0) {
       // We really remove the listeners when all notifications are done.
       final newLength = _length - _removedListeners;
-      final newListeners = <VoidCallback?>[]..length = newLength;
+      final newListeners = List<VoidCallback?>.filled(newLength, null);
 
       int newIndex = 0;
       for (int i = 0; i < _length; i++) {
