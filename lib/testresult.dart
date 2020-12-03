@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 class TestResult {
   final int listeners;
@@ -37,7 +36,7 @@ extension CountAverageTime on Iterable<TestResult> {
   Iterable<TestResult> calcAverages() {
     final mapGroupedByTime = this.toMultiMap(
         keyFunc: ((value) => _TestResultWithoutTime(
-            value.listeners, value.updates, value.approach)) as _TestResultWithoutTime Function(TestResult),
+            value.listeners, value.updates, value.approach)),
         valueFunc: (value) => value);
 
     return mapGroupedByTime.entries.map((e) => TestResult(
@@ -75,8 +74,7 @@ extension ToMultiMap<T> on Iterable<T> {
     required K Function(T) keyFunc,
     required V Function(T) valueFunc,
   }) {
-    assert(keyFunc != null);
-    assert(valueFunc != null);
+
     final map = <K, List<V>>{};
 
     for (final e in this) {
