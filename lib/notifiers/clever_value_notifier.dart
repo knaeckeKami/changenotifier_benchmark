@@ -1,39 +1,65 @@
 import 'package:flutter/foundation.dart';
 
-typedef VoidCallback = void Function();
+class CleverChangeNotifier implements Listenable {
+  int _length = 0;
+  List<VoidCallback?> _listeners = <VoidCallback?>[];
+  int _notificationCallStackDepth = 0;
+  int _removedListeners = 0;
+  bool _disposed = false;
 
-class _Listener {
-  _Listener(this.func);
-  final VoidCallback func;
-  VoidCallback? afterNotify;
-  void call() {
-    if (afterNotify == null) {
-      func();
-    }
+  bool _debugAssertNotDisposed() {
+    assert(() {
+      if (_disposed) {
+        throw FlutterError('A $runtimeType was used after being disposed.\n'
+            'Once you have called dispose() on a $runtimeType, it can no longer be used.');
+      }
+      return true;
+    }());
+    return true;
   }
-}
-
-class CleverChangeNotifier {
-  List<_Listener>? _listeners = <_Listener>[];
-  int _notifications = 0;
-  bool get _notifying => _notifications > 0;
 
   bool get hasListeners {
-    return _listeners!.isNotEmpty;
+    assert(_debugAssertNotDisposed());
+    return _length > 0;
   }
 
   void addListener(VoidCallback listener) {
-    _listeners!.add(_Listener(listener));
+    assert(_debugAssertNotDisposed());
+
+    if (_length == _listeners.length) {
+      if (_length == 0) {
+        _listeners = <VoidCallback?>[listener];
+        _length++;
+        return;
+      } else {
+        final storage = <VoidCallback?>[]..length = _listeners.length * 2;
+        for (int i = 0; i < _length; i++) {
+          storage[i] = _listeners[i];
+        }
+        _listeners = storage;
+      }
+    }
+    _listeners[_length++] = listener;
+  }
+
+  void _removeAt(int index) {
+    for (int i = index; i < _length - 1; i++) {
+      _listeners[i] = _listeners[i + 1];
+    }
+    _length--;
   }
 
   void removeListener(VoidCallback listener) {
-    for (int i = 0; i < _listeners!.length; i++) {
-      final _Listener _listener = _listeners![i];
-      if (_listener.func == listener && _listener.afterNotify == null) {
-        if (_notifying) {
-          _listener.afterNotify = () => _listeners!.removeAt(i);
+    assert(_debugAssertNotDisposed());
+
+    for (int i = 0; i < _length; i++) {
+      final _listener = _listeners[i];
+      if (_listener == listener) {
+        if (_notificationCallStackDepth > 0) {
+          _listeners[i] = null;
+          _removedListeners++;
         } else {
-          _listeners!.removeAt(i);
+          _removeAt(i);
         }
         break;
       }
@@ -41,31 +67,59 @@ class CleverChangeNotifier {
   }
 
   void dispose() {
-    _listeners = null;
+    assert(_debugAssertNotDisposed());
+    _disposed = true;
   }
 
   void notifyListeners() {
-    _notifications++;
-    if (_listeners!.isEmpty) {
-      _notifications--;
+    assert(_debugAssertNotDisposed());
+
+    if (_length == 0) {
       return;
     }
+    _notificationCallStackDepth++;
 
-    if (_listeners != null) {
-      final int end = _listeners!.length;
-      for (int i = 0; i < end; i++) {
-        try {
-          _listeners![i]();
-        } catch (exception, stack) {
-          print('error');
-        }
-      }
-      for (int i = end - 1; i >= 0; i--) {
-        _listeners![i].afterNotify?.call();
+    final int end = _length;
+    for (int i = 0; i < end; i++) {
+      try {
+        _listeners[i]?.call();
+      } catch (exception, stack) {
+        FlutterError.reportError(FlutterErrorDetails(
+          exception: exception,
+          stack: stack,
+          library: 'foundation library',
+          context: ErrorDescription(
+              'while dispatching notifications for $runtimeType'),
+          informationCollector: () sync* {
+            yield DiagnosticsProperty<CleverChangeNotifier>(
+              'The $runtimeType sending notification was',
+              this,
+              style: DiagnosticsTreeStyle.errorProperty,
+            );
+          },
+        ));
       }
     }
 
-    _notifications--;
+    _notificationCallStackDepth--;
+
+    if (_notificationCallStackDepth == 0 && _removedListeners > 0) {
+      // We really remove the listeners when all notifications are done.
+      final newLength = _length - _removedListeners;
+      final newListeners = <VoidCallback?>[]..length = newLength;
+
+      int newIndex = 0;
+      for (int i = 0; i < _length; i++) {
+        final listener = _listeners[i];
+        if (listener != null) {
+          newListeners[newIndex++] = listener;
+        }
+      }
+
+      _removedListeners = 0;
+      _length = newLength;
+      _listeners = newListeners;
+    }
   }
 }
 

@@ -11,7 +11,7 @@ class _Listener {
   }
 }
 
-class Thomas2ChangeNotifier {
+class Thomas2ChangeNotifier implements Listenable {
   List<_Listener>? _listeners = <_Listener>[];
   int _notificationCallStackDepth = 0;
   int _removedListeners = 0;
