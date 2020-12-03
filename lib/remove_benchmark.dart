@@ -11,7 +11,7 @@ import 'package:getx_benchmark/testresult.dart';
 
 import 'notifiers/thomas2.dart';
 
-typedef BenchMarkFunction = int Function({int? listeners});
+typedef BenchMarkFunction = int Function({required int listeners});
 
 const _benchmarkRuns = 50;
 const listenersToTest = [1, 2, 4, 8, 16, 32, 128, 1024];

@@ -1,8 +1,7 @@
 import 'package:ansicolor/ansicolor.dart';
 import 'package:barbecue/barbecue.dart';
-import 'package:flutter/foundation.dart';
 import 'package:getx_benchmark/testresult.dart';
-import 'package:getx_benchmark/testresult.dart';
+
 
 void printTestResults(Iterable<TestResult> results,
     {String? header,

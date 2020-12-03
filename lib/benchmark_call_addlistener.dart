@@ -10,7 +10,8 @@ import 'package:getx_benchmark/notifiers/thomas2.dart';
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
 
-typedef BenchMarkFunction = Future<int> Function({int? updates, int? listeners});
+typedef BenchMarkFunction = Future<int> Function(
+    {required int updates, required int listeners});
 
 const _benchmarkRuns = 5000;
 const listenersToTest = [1, 2, 4, 8, 16, 32, 64, 128];
