@@ -2,14 +2,13 @@ import 'package:flutter/foundation.dart';
 
 class CleverChangeNotifier implements Listenable {
   int _length = 0;
-  List<VoidCallback?> _listeners = List<VoidCallback?>.filled(0, null);
+  List<VoidCallback?>? _listeners = List<VoidCallback?>.filled(0, null);
   int _notificationCallStackDepth = 0;
   int _removedListeners = 0;
-  bool _disposed = false;
 
   bool _debugAssertNotDisposed() {
     assert(() {
-      if (_disposed) {
+      if (_listeners == null) {
         throw FlutterError('A $runtimeType was used after being disposed.\n'
             'Once you have called dispose() on a $runtimeType, it can no longer be used.');
       }
@@ -26,24 +25,24 @@ class CleverChangeNotifier implements Listenable {
   void addListener(VoidCallback listener) {
     assert(_debugAssertNotDisposed());
 
-    if (_length == _listeners.length) {
+    if (_length == _listeners!.length) {
       if (_length == 0) {
         _listeners = List<VoidCallback?>.filled(1, null);
       } else {
         final newListeners =
-            List<VoidCallback?>.filled(_listeners.length * 2, null);
+            List<VoidCallback?>.filled(_listeners!.length * 2, null);
         for (int i = 0; i < _length; i++) {
-          newListeners[i] = _listeners[i];
+          newListeners[i] = _listeners![i];
         }
         _listeners = newListeners;
       }
     }
-    _listeners[_length++] = listener;
+    _listeners![_length++] = listener;
   }
 
   void _removeAt(int index) {
     for (int i = index; i < _length - 1; i++) {
-      _listeners[i] = _listeners[i + 1];
+      _listeners![i] = _listeners![i + 1];
     }
     _length--;
   }
@@ -52,10 +51,10 @@ class CleverChangeNotifier implements Listenable {
     assert(_debugAssertNotDisposed());
 
     for (int i = 0; i < _length; i++) {
-      final _listener = _listeners[i];
+      final _listener = _listeners![i];
       if (_listener == listener) {
         if (_notificationCallStackDepth > 0) {
-          _listeners[i] = null;
+          _listeners![i] = null;
           _removedListeners++;
         } else {
           _removeAt(i);
@@ -67,7 +66,7 @@ class CleverChangeNotifier implements Listenable {
 
   void dispose() {
     assert(_debugAssertNotDisposed());
-    _disposed = true;
+    _listeners = null;
   }
 
   void notifyListeners() {
@@ -81,7 +80,7 @@ class CleverChangeNotifier implements Listenable {
     final int end = _length;
     for (int i = 0; i < end; i++) {
       try {
-        _listeners[i]?.call();
+        _listeners![i]?.call();
       } catch (exception, stack) {
         FlutterError.reportError(FlutterErrorDetails(
           exception: exception,
@@ -109,7 +108,7 @@ class CleverChangeNotifier implements Listenable {
 
       int newIndex = 0;
       for (int i = 0; i < _length; i++) {
-        final listener = _listeners[i];
+        final listener = _listeners![i];
         if (listener != null) {
           newListeners[newIndex++] = listener;
         }
