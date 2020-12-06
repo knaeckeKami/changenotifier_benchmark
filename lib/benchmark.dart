@@ -10,6 +10,7 @@ import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
 import 'package:getx_benchmark/notifiers/thomas2.dart';
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
+import 'package:getx_benchmark/notifiers/simple_change_notifier.dart';
 
 typedef BenchMarkFunction = Future<int> Function({int updates, int listeners});
 
@@ -23,6 +24,7 @@ const Map<String, BenchMarkFunction> _benchmarksMap = {
   "CleverValueNotifier": cleverValueNotifier,
   "Thomas2" : thomas2ValueNotifer,
   "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
+  'SimpleValueNotifier' : simpleValueNotifier
 };
 
 Future<int> originalValueNotifier({final int updates, final int listeners}) {
@@ -138,6 +140,27 @@ Future<int> thomas2ValueNotifer(
 Future<int> cleverValueNotifier({final int updates, final int listeners}) {
   final c = Completer<int>();
   final notifier = CleverValueNotifier<int>(0);
+  final timer = Stopwatch()..start();
+
+  for (var i = 0; i < listeners - 1; i++) {
+    notifier.addListener(() {});
+  }
+  notifier.addListener(() {
+    if (updates == notifier.value) {
+      timer.stop();
+      c.complete(timer.elapsedMicroseconds);
+    }
+  });
+
+  for (var i = 0; i <= updates; i++) {
+    notifier.value = i;
+  }
+  return c.future;
+}
+
+Future<int> simpleValueNotifier({final int updates, final int listeners}) {
+  final c = Completer<int>();
+  final notifier = SimpleValue<int>(0);
   final timer = Stopwatch()..start();
 
   for (var i = 0; i < listeners - 1; i++) {
