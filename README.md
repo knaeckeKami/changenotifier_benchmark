@@ -10,7 +10,7 @@ The times have been measured on my Huawei Mate 20 Pro in release mode.
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
  │                                                                              ValueNotifier benchmark                                                                               │
  ├─────────────┬──────────────────────┬─────────────────────┬─────────────────────┬─────────────────────┬────────────────────────┬──────────────────────────────┬─────────────────────┤
- │             │ OriginalValueNotifier│    ValueNotifier    │    Value (GetX)     │ CleverValueNotifier │ LinkedListValueNotifier│ CustomLinkedListValueNotifier│       Thomas2       │
+ │             │ InitialValueNotifier│    ValueNotifier    │    Value (GetX)     │ ProposedValueNotifier │ LinkedListValueNotifier│ CustomLinkedListValueNotifier│       Thomas2       │
  │  Listeners  ├──────────┬───────────┼─────────┬───────────┼─────────┬───────────┼─────────┬───────────┼───────────┬────────────┼──────────────┬───────────────┼─────────┬───────────┤
  │             │ Updates  │ Time [µs] │ Updates │ Time [µs] │ Updates │ Time [µs] │ Updates │ Time [µs] │  Updates  │ Time [µs]  │   Updates    │   Time [µs]   │ Updates │ Time [µs] │
  ├─────────────┼──────────┼───────────┼─────────┼───────────┼─────────┼───────────┼─────────┼───────────┼───────────┼────────────┼──────────────┼───────────────┼─────────┼───────────┤
@@ -85,7 +85,7 @@ The times have been measured on my Huawei Mate 20 Pro in release mode.
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                    Remove Listeners benchmark test                                                     │
 ├─────────────┬───────────────┬──────────────┬─────────────────────┬─────────────────────────┬───────────┬───────────────────────────────┤
-│             │ ValueNotifier │ Value (GetX) │ CleverValueNotifier │ LinkedListValueNotifier │  Thomas2  │ CustomLinkedListValueNotifier │
+│             │ ValueNotifier │ Value (GetX) │ ProposedValueNotifier │ LinkedListValueNotifier │  Thomas2  │ CustomLinkedListValueNotifier │
 │  Listeners  ├───────────────┼──────────────┼─────────────────────┼─────────────────────────┼───────────┼───────────────────────────────┤
 │             │   Time [µs]   │  Time [µs]   │      Time [µs]      │        Time [µs]        │ Time [µs] │           Time [µs]           │
 ├─────────────┼───────────────┼──────────────┼─────────────────────┼─────────────────────────┼───────────┼───────────────────────────────┤
@@ -116,7 +116,7 @@ The times have been measured on my Huawei Mate 20 Pro in release mode.
  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
  │                                                  Remove Listeners while notify benchmark test                                                   │
  ├─────────────┬───────────────────────┬───────────────┬─────────────────────┬─────────────────────────┬───────────┬───────────────────────────────┤
- │             │ OriginalValueNotifier │ ValueNotifier │ CleverValueNotifier │ LinkedListValueNotifier │  Thomas2  │ CustomLinkedListValueNotifier │
+ │             │ InitialValueNotifier │ ValueNotifier │ ProposedValueNotifier │ LinkedListValueNotifier │  Thomas2  │ CustomLinkedListValueNotifier │
  │  Listeners  ├───────────────────────┼───────────────┼─────────────────────┼─────────────────────────┼───────────┼───────────────────────────────┤
  │             │       Time [µs]       │   Time [µs]   │      Time [µs]      │        Time [µs]        │ Time [µs] │           Time [µs]           │
  ├─────────────┼───────────────────────┼───────────────┼─────────────────────┼─────────────────────────┼───────────┼───────────────────────────────┤
@@ -148,7 +148,7 @@ The times have been measured on my Huawei Mate 20 Pro in release mode.
  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
  │                                                                     addListener benchmark                                                                      │
  ├─────────────┬───────────────────────┬───────────────┬──────────────┬─────────────────────┬───────────┬─────────────────────────┬───────────────────────────────┤
- │             │ OriginalValueNotifier │ ValueNotifier │ Value (GetX) │ CleverValueNotifier │  Thomas2  │ LinkedListValueNotifier │ CustomLinkedListValueNotifier │
+ │             │ InitialValueNotifier │ ValueNotifier │ Value (GetX) │ ProposedValueNotifier │  Thomas2  │ LinkedListValueNotifier │ CustomLinkedListValueNotifier │
  │  Listeners  ├───────────────────────┼───────────────┼──────────────┼─────────────────────┼───────────┼─────────────────────────┼───────────────────────────────┤
  │             │       Time [µs]       │   Time [µs]   │  Time [µs]   │      Time [µs]      │ Time [µs] │        Time [µs]        │           Time [µs]           │
  ├─────────────┼───────────────────────┼───────────────┼──────────────┼─────────────────────┼───────────┼─────────────────────────┼───────────────────────────────┤
