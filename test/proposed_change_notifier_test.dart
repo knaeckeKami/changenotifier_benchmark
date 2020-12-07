@@ -4,9 +4,9 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
+import 'package:getx_benchmark/notifiers/proposed.dart';
 
-class TestNotifier extends CleverChangeNotifier {
+class TestNotifier extends ProposedChangeNotifier {
   void notify() {
     notifyListeners();
   }
@@ -14,7 +14,7 @@ class TestNotifier extends CleverChangeNotifier {
   bool get isListenedTo => hasListeners;
 }
 
-class HasListenersTester<T> extends CleverValueNotifier<T> {
+class HasListenersTester<T> extends ProposedValueNotifier<T> {
   HasListenersTester(T value) : super(value);
   bool get testHasListeners => hasListeners;
 }
@@ -26,7 +26,7 @@ class A {
   }
 }
 
-class B extends A with CleverChangeNotifier {
+class B extends A with ProposedChangeNotifier {
   @override
   void test() {
     notifyListeners();
@@ -34,7 +34,7 @@ class B extends A with CleverChangeNotifier {
   }
 }
 
-class Counter with CleverChangeNotifier {
+class Counter with ProposedChangeNotifier {
   int get value => _value;
   int _value = 0;
   set value(int value) {

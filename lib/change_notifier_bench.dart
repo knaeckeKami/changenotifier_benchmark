@@ -3,9 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
-import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
-import 'package:getx_benchmark/notifiers/thomas2.dart';
+import 'package:getx_benchmark/notifiers/proposed.dart';
+import 'package:getx_benchmark/notifiers/initial.dart';
 
 import 'common.dart';
 
@@ -125,7 +124,7 @@ abstract class _Notifier implements Listenable {
   void notify();
 }
 
-class _InitialNotifier extends OriginalChangeNotifier implements _Notifier {
+class _InitialNotifier extends InitialChangeNotifier implements _Notifier {
   void notify() => notifyListeners();
 }
 
@@ -133,15 +132,10 @@ class _CurrentNotifier extends ChangeNotifier implements _Notifier {
   void notify() => notifyListeners();
 }
 
-class _ProposedNotifier extends CleverChangeNotifier implements _Notifier {
-  void notify() => notifyListeners();
-}
-
-class _Thomas2Notifier extends Thomas2ChangeNotifier implements _Notifier {
+class _ProposedNotifier extends ProposedChangeNotifier implements _Notifier {
   void notify() => notifyListeners();
 }
 
 _Notifier _createInitialNotifier() => _InitialNotifier();
 _Notifier _createCurrentNotifier() => _CurrentNotifier();
 _Notifier _createProposedNotifier() => _ProposedNotifier();
-_Notifier _createThomas2Notifier() => _Thomas2Notifier();

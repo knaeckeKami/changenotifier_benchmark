@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class CleverChangeNotifier implements Listenable {
+class ProposedChangeNotifier implements Listenable {
   int _length = 0;
   List<VoidCallback?>? _listeners = List<VoidCallback?>.filled(0, null);
   int _notificationCallStackDepth = 0;
@@ -89,7 +89,7 @@ class CleverChangeNotifier implements Listenable {
           context: ErrorDescription(
               'while dispatching notifications for $runtimeType'),
           informationCollector: () sync* {
-            yield DiagnosticsProperty<CleverChangeNotifier>(
+            yield DiagnosticsProperty<ProposedChangeNotifier>(
               'The $runtimeType sending notification was',
               this,
               style: DiagnosticsTreeStyle.errorProperty,
@@ -126,10 +126,10 @@ class CleverChangeNotifier implements Listenable {
 /// When [value] is replaced with something that is not equal to the old
 /// value as evaluated by the equality operator ==, this class notifies its
 /// listeners.
-class CleverValueNotifier<T> extends CleverChangeNotifier
-    implements ValueListenable<T> {
+class ProposedValueNotifier<T> extends ProposedChangeNotifier
+    implements ValueNotifier<T> {
   /// Creates a [ChangeNotifier] that wraps this value.
-  CleverValueNotifier(this._value);
+  ProposedValueNotifier(this._value);
 
   /// The current value stored in this notifier.
   ///

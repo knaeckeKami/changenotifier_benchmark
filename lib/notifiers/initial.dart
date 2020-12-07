@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class OriginalChangeNotifier implements Listenable {
+class InitialChangeNotifier implements Listenable {
   ObserverList<VoidCallback>? _listeners = ObserverList<VoidCallback>();
 
   bool _debugAssertNotDisposed() {
@@ -114,7 +114,7 @@ class OriginalChangeNotifier implements Listenable {
             context: ErrorDescription(
                 'while dispatching notifications for $runtimeType'),
             informationCollector: () sync* {
-              yield DiagnosticsProperty<OriginalChangeNotifier>(
+              yield DiagnosticsProperty<InitialChangeNotifier>(
                 'The $runtimeType sending notification was',
                 this,
                 style: DiagnosticsTreeStyle.errorProperty,
@@ -132,10 +132,10 @@ class OriginalChangeNotifier implements Listenable {
 /// When [value] is replaced with something that is not equal to the old
 /// value as evaluated by the equality operator ==, this class notifies its
 /// listeners.
-class OriginalValueNotifier<T> extends OriginalChangeNotifier
-    implements ValueListenable<T> {
+class InitialValueNotifier<T> extends InitialChangeNotifier
+    implements ValueNotifier<T> {
   /// Creates a [ChangeNotifier] that wraps this value.
-  OriginalValueNotifier(this._value);
+  InitialValueNotifier(this._value);
 
   /// The current value stored in this notifier.
   ///
