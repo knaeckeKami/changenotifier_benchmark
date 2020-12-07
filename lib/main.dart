@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:getx_benchmark/notifiers/factories.dart';
 
-const name = 'Proposed';
-const notifierCount = 0;
+const name = 'Initial';
+const notifierCount = 1000;
 const listenerCount = 1000;
 
 main() => runApp(const MyApp());
