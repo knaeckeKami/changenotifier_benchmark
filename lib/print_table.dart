@@ -1,21 +1,20 @@
 import 'package:ansicolor/ansicolor.dart';
 import 'package:barbecue/barbecue.dart';
-import 'package:flutter/foundation.dart';
-import 'package:getx_benchmark/testresult.dart';
 import 'package:getx_benchmark/testresult.dart';
 
+
 void printTestResults(Iterable<TestResult> results,
-    {String header,
+    {String? header,
     bool showUpdates = true,
     List<int> updatesToTest = const []}) {
   final resultsByApproach =
-      results.toMultiMap(keyFunc: (r) => r.approach, valueFunc: (v) => v);
+      results.toMultiMap(keyFunc: ((r) => r.approach), valueFunc: (v) => v);
 
   final approaches = Set.of(results.map((e) => e.approach));
 
   final bold = AnsiPen()..white(bold: true);
 
-  int lastListeners;
+  int? lastListeners;
 
   final table = Table(
       tableStyle: TableStyle(border: true),
@@ -52,18 +51,18 @@ void printTestResults(Iterable<TestResult> results,
         for (var i = 0; i < resultsByApproach.values.first.length; i++)
           Row(cells: [
             if (lastListeners !=
-                resultsByApproach[approaches.first][i].listeners)
+                resultsByApproach[approaches.first]![i].listeners)
               Cell(
                   (lastListeners =
-                          resultsByApproach[approaches.first][i].listeners)
+                          resultsByApproach[approaches.first]![i].listeners)
                       .toString(),
                   style: CellStyle(alignment: TextAlignment.MiddleRight),
                   rowSpan: showUpdates ? updatesToTest.length : 1),
             for (final approach in approaches) ...[
               if (showUpdates)
-                Cell(resultsByApproach[approach][i].updates.toString(),
+                Cell(resultsByApproach[approach]![i].updates.toString(),
                     style: CellStyle(alignment: TextAlignment.MiddleRight)),
-              Cell(resultsByApproach[approach][i].time.toString(),
+              Cell(resultsByApproach[approach]![i].time.toString(),
                   style: CellStyle(alignment: TextAlignment.MiddleRight)),
             ]
           ])
@@ -73,9 +72,9 @@ void printTestResults(Iterable<TestResult> results,
           Cell(bold("Total Time:")),
           for (final approach in approaches) ...[
             Cell(
-              bold(resultsByApproach[approach]
-                  .map((e) => e.time)
-                  .fold(0, (a, b) => a + b)
+              bold(resultsByApproach[approach]!
+                  .map<int>(((e) => e.time))
+                  .fold<int>(0, ((a, b) => a + b))
                   .toString()),
               columnSpan: showUpdates ? 2 : 1,
               style: CellStyle(

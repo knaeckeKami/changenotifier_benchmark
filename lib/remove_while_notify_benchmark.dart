@@ -2,40 +2,29 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
-import 'package:getx_benchmark/notifiers/clever_value_notifier.dart';
-import 'package:getx_benchmark/notifiers/custom_linked_list_value_notifier.dart';
-import 'package:getx_benchmark/notifiers/linked_list_value_notifier.dart';
-import 'package:getx_benchmark/notifiers/original_change_notifier.dart';
+import 'package:getx_benchmark/notifiers/factories.dart';
 import 'package:getx_benchmark/print_table.dart';
 import 'package:getx_benchmark/testresult.dart';
 
-import 'notifiers/thomas2.dart';
+const _benchmarkRuns = 10000;
+const listenersToTest = [1, 2, 4, 8, 16];
 
-typedef BenchMarkFunction = Future<int> Function({int listeners});
-
-const _benchmarkRuns = 50;
-const listenersToTest = [1, 2, 4, 8, 16, 32, 64, 128];
-
-final Map<String, BenchMarkFunction> _benchmarksMap = {
-  "OriginalValueNotifier": originalValueNotifier,
-  "ValueNotifier": defaultValueNotifier,
-  "CleverValueNotifier": cleverValueNotifier,
-  "Thomas2": thomas2,
-  "CustomLinkedListValueNotifier": customLinkedListValueNotifier,
-};
-
-Future<int> thomas2({final int listeners}) async {
+Future<int> runBenchmark({
+  required ValueNotifierFactory creator,
+  required final int listeners,
+}) async {
   final c = Completer<void>();
-  final notifier = Thomas2ValueNotifier<int>(0);
+  final notifier = creator(0);
   final listenersList = <VoidCallback>[
     for (var i = 0; i < listeners - 1; i++) () {}
   ];
-  final timer = Stopwatch()..start();
 
   for (final l in listenersList) {
     notifier.addListener(l);
   }
+
+  final timer = Stopwatch();
+
   notifier.addListener(() {
     for (final l in listenersList) {
       notifier.removeListener(l);
@@ -44,158 +33,8 @@ Future<int> thomas2({final int listeners}) async {
     c.complete();
   });
 
-  notifier.value = 1;
+  timer.start();
 
-  await c.future;
-
-  return timer.elapsedMicroseconds;
-}
-
-Future<int> originalValueNotifier({final int listeners}) async {
-  final c = Completer<void>();
-  final notifier = OriginalValueNotifier<int>(0);
-  final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners - 1; i++) () {}
-  ];
-  final timer = Stopwatch()..start();
-
-  for (final l in listenersList) {
-    notifier.addListener(l);
-  }
-  notifier.addListener(() {
-    for (final l in listenersList) {
-      notifier.removeListener(l);
-    }
-    timer.stop();
-    c.complete();
-  });
-
-  notifier.value = 1;
-
-  await c.future;
-
-  return timer.elapsedMicroseconds;
-}
-
-Future<int> defaultValueNotifier({final int listeners}) async {
-  final c = Completer<void>();
-  final notifier = ValueNotifier<int>(0);
-  final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners - 1; i++) () {}
-  ];
-  final timer = Stopwatch()..start();
-
-  for (final l in listenersList) {
-    notifier.addListener(l);
-  }
-  notifier.addListener(() {
-    for (final l in listenersList) {
-      notifier.removeListener(l);
-    }
-    timer.stop();
-    c.complete();
-  });
-  notifier.value = 1;
-
-  await c.future;
-
-  return timer.elapsedMicroseconds;
-}
-
-Future<int> linkedListValueNotifier({final int listeners}) async {
-  final c = Completer<void>();
-  final notifier = LinkedListValueNotifier<int>(0);
-  final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners - 1; i++) () {}
-  ];
-  final timer = Stopwatch()..start();
-
-  for (final l in listenersList) {
-    notifier.addListener(l);
-  }
-  notifier.addListener(() {
-    for (final l in listenersList) {
-      notifier.removeListener(l);
-    }
-    timer.stop();
-    c.complete();
-  });
-  notifier.value = 1;
-
-  await c.future;
-
-  return timer.elapsedMicroseconds;
-}
-
-Future<int> customLinkedListValueNotifier({final int listeners}) async {
-  final c = Completer<void>();
-  final notifier = CustomLinkedListChangeNotifier<int>(0);
-  final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners - 1; i++) () {}
-  ];
-  final timer = Stopwatch()..start();
-
-  for (final l in listenersList) {
-    notifier.addListener(l);
-  }
-  notifier.addListener(() {
-    for (final l in listenersList) {
-      notifier.removeListener(l);
-    }
-    timer.stop();
-    c.complete();
-  });
-  notifier.value = 1;
-
-  await c.future;
-
-  return timer.elapsedMicroseconds;
-}
-
-Future<int> cleverValueNotifier(
-    {final int updates, final int listeners}) async {
-  final c = Completer<void>();
-  final notifier = CleverValueNotifier<int>(0);
-  final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners - 1; i++) () {}
-  ];
-  final timer = Stopwatch()..start();
-
-  for (final l in listenersList) {
-    notifier.addListener(l);
-  }
-  notifier.addListener(() {
-    for (final l in listenersList) {
-      notifier.removeListener(l);
-    }
-    timer.stop();
-    c.complete();
-  });
-  notifier.value = 1;
-
-  await c.future;
-
-  return timer.elapsedMicroseconds;
-}
-
-Future<int> getXValueNotifier({final int listeners}) async {
-  final c = Completer<void>();
-  final notifier = Value<int>(0);
-  final listenersList = <VoidCallback>[
-    for (var i = 0; i < listeners - 1; i++) () {}
-  ];
-  final timer = Stopwatch()..start();
-
-  for (final l in listenersList) {
-    notifier.addListener(l);
-  }
-  notifier.addListener(() {
-    for (final l in listenersList) {
-      notifier.removeListener(l);
-    }
-    timer.stop();
-    c.complete();
-  });
   notifier.value = 1;
 
   await c.future;
@@ -205,22 +44,23 @@ Future<int> getXValueNotifier({final int listeners}) async {
 
 void main() {
   setUpAll(() async {
-    for (final f in _benchmarksMap.entries) {
+    for (final f in factories.entries) {
       print("warmup ${f.key}");
-      f.value(listeners: 100);
+      runBenchmark(creator: f.value, listeners: 100);
     }
   });
 
   test("benchmark", () async {
     final results = [
       for (var i = 0; i < _benchmarkRuns; i++)
-        for (final entry in _benchmarksMap.entries)
+        for (final entry in factories.entries)
           for (var listeners in listenersToTest)
             TestResult(
               listeners,
               0,
               entry.key,
-              await entry.value(
+              await runBenchmark(
+                creator: entry.value,
                 listeners: listeners,
               ),
             )

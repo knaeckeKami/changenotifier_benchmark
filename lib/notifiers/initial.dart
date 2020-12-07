@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-class OriginalChangeNotifier implements Listenable {
-  ObserverList<VoidCallback> _listeners = ObserverList<VoidCallback>();
+class InitialChangeNotifier implements Listenable {
+  ObserverList<VoidCallback>? _listeners = ObserverList<VoidCallback>();
 
   bool _debugAssertNotDisposed() {
     assert(() {
@@ -32,7 +32,7 @@ class OriginalChangeNotifier implements Listenable {
   @protected
   bool get hasListeners {
     assert(_debugAssertNotDisposed());
-    return _listeners.isNotEmpty;
+    return _listeners!.isNotEmpty;
   }
 
   /// Register a closure to be called when the object changes.
@@ -41,7 +41,7 @@ class OriginalChangeNotifier implements Listenable {
   @override
   void addListener(VoidCallback listener) {
     assert(_debugAssertNotDisposed());
-    _listeners.add(listener);
+    _listeners!.add(listener);
   }
 
   /// Remove a previously registered closure from the list of closures that are
@@ -66,7 +66,7 @@ class OriginalChangeNotifier implements Listenable {
   @override
   void removeListener(VoidCallback listener) {
     assert(_debugAssertNotDisposed());
-    _listeners.remove(listener);
+    _listeners!.remove(listener);
   }
 
   /// Discards any resources used by the object. After this is called, the
@@ -102,10 +102,10 @@ class OriginalChangeNotifier implements Listenable {
     assert(_debugAssertNotDisposed());
     if (_listeners != null) {
       final List<VoidCallback> localListeners =
-          List<VoidCallback>.from(_listeners);
+          List<VoidCallback>.from(_listeners!);
       for (final VoidCallback listener in localListeners) {
         try {
-          if (_listeners.contains(listener)) listener();
+          if (_listeners!.contains(listener)) listener();
         } catch (exception, stack) {
           FlutterError.reportError(FlutterErrorDetails(
             exception: exception,
@@ -114,7 +114,7 @@ class OriginalChangeNotifier implements Listenable {
             context: ErrorDescription(
                 'while dispatching notifications for $runtimeType'),
             informationCollector: () sync* {
-              yield DiagnosticsProperty<OriginalChangeNotifier>(
+              yield DiagnosticsProperty<InitialChangeNotifier>(
                 'The $runtimeType sending notification was',
                 this,
                 style: DiagnosticsTreeStyle.errorProperty,
@@ -132,10 +132,10 @@ class OriginalChangeNotifier implements Listenable {
 /// When [value] is replaced with something that is not equal to the old
 /// value as evaluated by the equality operator ==, this class notifies its
 /// listeners.
-class OriginalValueNotifier<T> extends OriginalChangeNotifier
-    implements ValueListenable<T> {
+class InitialValueNotifier<T> extends InitialChangeNotifier
+    implements ValueNotifier<T> {
   /// Creates a [ChangeNotifier] that wraps this value.
-  OriginalValueNotifier(this._value);
+  InitialValueNotifier(this._value);
 
   /// The current value stored in this notifier.
   ///

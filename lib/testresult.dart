@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 class TestResult {
   final int listeners;
@@ -25,10 +24,10 @@ class TestResult {
 
 
 extension _AverageByRun on Iterable<TestResult> {
-  double averageTime() {
+  double? averageTime() {
     return this
         .map((e) => e.time)
-        .fold(0, (previousValue, element) => previousValue + element) /
+        .fold(0, (dynamic previousValue, element) => previousValue + element) /
         this.length;
   }
 }
@@ -36,15 +35,15 @@ extension _AverageByRun on Iterable<TestResult> {
 extension CountAverageTime on Iterable<TestResult> {
   Iterable<TestResult> calcAverages() {
     final mapGroupedByTime = this.toMultiMap(
-        keyFunc: (value) => _TestResultWithoutTime(
-            value.listeners, value.updates, value.approach),
+        keyFunc: ((value) => _TestResultWithoutTime(
+            value.listeners, value.updates, value.approach)),
         valueFunc: (value) => value);
 
     return mapGroupedByTime.entries.map((e) => TestResult(
       e.key.listeners,
       e.key.updates,
       e.key.approach,
-      e.value.averageTime().round(),
+      e.value.averageTime()!.round(),
     ));
   }
 }
@@ -72,11 +71,10 @@ class _TestResultWithoutTime {
 
 extension ToMultiMap<T> on Iterable<T> {
   Map<K, List<V>> toMultiMap<K, V>({
-    @required K Function(T) keyFunc,
-    @required V Function(T) valueFunc,
+    required K Function(T) keyFunc,
+    required V Function(T) valueFunc,
   }) {
-    assert(keyFunc != null);
-    assert(valueFunc != null);
+
     final map = <K, List<V>>{};
 
     for (final e in this) {
