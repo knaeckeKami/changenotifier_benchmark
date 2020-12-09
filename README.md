@@ -1,6 +1,7 @@
 # value notifier benchmarks
 
 This benchmark may help us in finding a faster implementation for ChangeNotifier.
+See https://github.com/flutter/flutter/issues/71900 and https://github.com/flutter/flutter/pull/71986
 
 The times have been measured on a OnePlus 8 Pro in release mode.
 
